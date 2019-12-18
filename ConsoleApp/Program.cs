@@ -67,7 +67,7 @@ namespace RLUPKT.ConsoleApp
 
         private static void Main(string[] args)
         {
-            Parser.Default.ParseArguments<Options>(args).WithParsed<Options>(o =>
+            Parser.Default.ParseArguments<Options>(args).WithParsed(o =>
             {
                 if (o.Input.Equals(o.Output))
                 {
@@ -81,14 +81,14 @@ namespace RLUPKT.ConsoleApp
                 Console.WriteLine(outputFolder);
                 foreach (var file in Directory.EnumerateFiles(inputFolder, "*.upk"))
                 {
-                    if (file.EndsWith("_decrypted.upk"))
+                    var inputFileName = Path.GetFileName(file);
+                    var outputFilePath = Path.Combine(outputFolder, inputFileName);
+                    if (File.Exists(outputFilePath))
                     {
                         Console.Error.WriteLine("File is already decrypted.");
                         continue;
                     }
 
-                    var inputFileName = Path.GetFileNameWithoutExtension(file);
-                    var outputFilePath = Path.Combine(outputFolder, inputFileName + "_decrypted.upk");
                     new FileInfo(outputFilePath).Directory.Create();
                     //Console.WriteLine($"Processing: {inputFileName}");
                     try

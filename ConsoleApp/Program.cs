@@ -69,16 +69,27 @@ namespace RLUPKT.ConsoleApp
         {
             Parser.Default.ParseArguments<Options>(args).WithParsed(o =>
             {
+                var inputFolder = o.Input;
+                var outputFolder = o.Output;
+
                 if (o.Input.Equals(o.Output))
                 {
                     Console.WriteLine("Input and output must not be the same");
                     return;
                 }
-
-                var inputFolder = o.Input;
-                var outputFolder = o.Output;
                 Console.WriteLine(inputFolder);
                 Console.WriteLine(outputFolder);
+
+                if (o.CopyTfc)
+                {
+                    Console.WriteLine("Copying TFC files...");
+                    foreach (var file in Directory.EnumerateFiles(inputFolder, "*.tfc"))
+                    {
+                        var outputFilePath = Path.Combine(outputFolder, Path.GetFileName(file));
+                        File.Copy(file, outputFilePath);
+                    }
+                }
+
                 foreach (var file in Directory.EnumerateFiles(inputFolder, "*.upk"))
                 {
                     var inputFileName = Path.GetFileName(file);
